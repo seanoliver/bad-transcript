@@ -1,6 +1,6 @@
-import axios from "axios";
+// import axios from "axios";
 
-export const getTranscription = async (audio: Blob) => {
-  const response = await axios.post();
+// export const getTranscription = async (audio: Blob) => {
+//   const response = await axios.post();
 
-}
+// }
