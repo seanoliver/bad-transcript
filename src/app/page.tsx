@@ -6,10 +6,6 @@ import FullDropzone from '@/components/full-dropzone';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-// Base styles for the file dropzone box
-export const BASE_ZONE_STYLE =
-	'max-w-full h-full flex justify-center items-center rounded-xl text-xs text-gray-500';
-
 /**
  * The home page of the application. Contains the file dropzone and
  * the transcription results. Controls rendering of the dropzone and the inner
