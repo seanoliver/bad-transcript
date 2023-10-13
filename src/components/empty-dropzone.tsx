@@ -1,4 +1,4 @@
-import { BASE_ZONE_STYLE } from "@/app/page";
+import { BASE_ZONE_STYLE } from '@/lib/constants'
 
 /**
  * The dropzone element when no file has yet been dropped into the zone.

@@ -1,4 +1,4 @@
-import { BASE_ZONE_STYLE } from '@/app/page';
+import { BASE_ZONE_STYLE } from '@/lib/constants'
 import { Button } from './ui/button';
 
 /**
