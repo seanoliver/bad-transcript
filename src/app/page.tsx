@@ -1,52 +1,56 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { File } from 'buffer';
-import { useState } from 'react';
+import Dropzone from '@/components/dropzone';
+import EmptyDropzone from '@/components/empty-dropzone';
+import FullDropzone from '@/components/full-dropzone';
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
+// Base styles for the file dropzone box
+export const BASE_ZONE_STYLE =
+	'max-w-full h-full flex justify-center items-center rounded-xl text-xs text-gray-500';
+
+/**
+ * The home page of the application. Contains the file dropzone and
+ * the transcription results. Controls rendering of the dropzone and the inner
+ * empty or full dropzone elements (depending on state).
+ *
+ * TODO: Implement the transcription results
+ */
 export default function Home() {
-	const {
-		acceptedFiles,
-		getRootProps,
-		getInputProps,
-		isDragActive,
-		isFocused,
-		inputRef,
-	} = useDropzone({
-		onDrop: acceptedFiles => {
-			console.log('drop', acceptedFiles);
-		},
-		onDropAccepted: acceptedFiles => {
-			console.log('drop accepted', acceptedFiles);
-		},
-		multiple: false,
-	});
+	const [fileLoaded, setFileLoaded] = useState(false);
+	const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+		useDropzone({
+			accept: {
+				'audio/*': ['*.mp3', '*.wav', '*.ogg', '*.flac', '*.m4a'],
+			},
+			onDrop: acceptedFiles => {
+				console.log('drop', acceptedFiles);
+			},
+			onDropAccepted: acceptedFiles => {
+				console.log('drop accepted', acceptedFiles);
+			},
+			onDropRejected: () => {
+				console.log('drop rejected');
+			},
+			multiple: false,
+			noClick: fileLoaded,
+		});
 
-	const baseZoneStyle =
-		'max-w-full h-full flex justify-center items-center rounded-xl text-xs text-gray-500';
-
-	const dragActiveTw = isDragActive
-		? 'bg-blue-400 text-white text-bold border-4 border-dashed border-blue-100'
-		: 'bg-slate-800 border-2 border-dashed border-slate-500';
-
-	const fileAcceptedTw =
-		acceptedFiles.length > 0 ? 'bg-green-500' : 'bg-slate-900';
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      setFileLoaded(true);
+    }
+  }, [acceptedFiles]);
 
 	return (
 		<Dropzone
 			getRootProps={getRootProps}
-			getInputProps={getInputProps}
-			acceptedFiles={acceptedFiles}
-			isDragActive={isDragActive}>
-			{acceptedFiles.length > 0 ? (
-				<FullDropzone
-					currentFile={acceptedFiles[0]}
-					baseZoneStyle={baseZoneStyle}
-				/>
+      acceptedFiles={acceptedFiles}>
+			{fileLoaded ? (
+				<FullDropzone currentFile={acceptedFiles[0]} />
 			) : (
 				<EmptyDropzone
-					baseZoneStyle={baseZoneStyle}
 					getInputProps={getInputProps}
 					isDragActive={isDragActive}
 				/>
@@ -54,71 +58,3 @@ export default function Home() {
 		</Dropzone>
 	);
 }
-
-const Dropzone = ({
-	getRootProps,
-	getInputProps,
-	acceptedFiles,
-	isDragActive,
-	children,
-}: {
-	getRootProps: any;
-	getInputProps: any;
-	acceptedFiles: any;
-	isDragActive: any;
-	children: any;
-}) => {
-	const baseZoneStyle =
-		'max-w-full h-full flex justify-center items-center rounded-xl text-xs text-gray-500';
-
-	const fileAcceptedTw =
-		acceptedFiles.length > 0 ? 'bg-green-500' : 'bg-slate-900';
-
-	return (
-		<div className='mx-auto h-screen flex justify-center items-center bg-slate-900'>
-			<div
-				{...getRootProps({ className: 'dropzone' })}
-				className='h-2/6 w-3/6'>
-				{children}
-			</div>
-		</div>
-	);
-};
-
-const EmptyDropzone = ({
-	getInputProps,
-	baseZoneStyle,
-	isDragActive,
-}: {
-	getInputProps: any;
-	baseZoneStyle: string;
-	isDragActive: boolean;
-}) => {
-	const dragActiveTw = isDragActive
-		? 'bg-blue-400 text-white text-bold border-4 border-dashed border-blue-100'
-		: 'bg-slate-800 border-2 border-dashed border-slate-500';
-
-	return (
-		<>
-			<input {...getInputProps()} />
-			<p className={`${baseZoneStyle} ${dragActiveTw}`}>
-				Drop audio file here, or click to select
-			</p>
-		</>
-	);
-};
-
-const FullDropzone = ({
-	currentFile,
-	baseZoneStyle,
-}: {
-	currentFile: any;
-	baseZoneStyle: string;
-}) => {
-	return (
-		<div className={`${baseZoneStyle} flex flex-col h-full w-full gap-4`}>
-			<p className=''>{currentFile.name}</p>
-			<Button>Upload now!</Button>
-		</div>
-	);
-};
